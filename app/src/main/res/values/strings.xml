@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Mysql</string>
+    <string name="name">Name</string>
+    <string name="id">ID:</string>
+    <string name="Name">Имя:</string>
+    <string name="Surname">Фамилия:</string>
+    <string name="Middlename">Отчество:</string>
+    <string name="GetInfo">Узнать</string>
+    <string name="togglebutton">ToggleButton</string>
+    <string name="noAccess">Нет Доступа</string>
+    <string name="Access">Есть Доступ</string>
+    <string name="getaccesstext">GetAccessText</string>
+    <string name="idhint">Введите ID</string>
+    <string name="accesstexting">Доступ</string>
+    <string name="nfcbtn">ToggleButton</string>
+    <string name="readState">Read</string>
+    <string name="writeState">Write</string>
+    <string name="sendRFID_ID">Привязать карту</string>
+    <string name="tglWrite">Чтение</string>
+    <string name="tglRead">Запись</string>
+    <string name="emploBtn">Сотрудники</string>
+</resources>

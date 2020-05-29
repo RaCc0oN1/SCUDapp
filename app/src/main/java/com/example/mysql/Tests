@@ -1,0 +1,189 @@
+package com.example.mysql;
+
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.UnsupportedEncodingException;
+
+public class MainActivity extends AppCompatActivity {
+
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    private EditText id;
+    private EditText name;
+    private EditText surname;
+    private EditText middlename;
+    private ToggleButton btnstate;
+    private ToggleButton tglReadWrite;
+    private EditText txtTagContent;
+
+    private String idstring;
+    private String namestring;
+    private String surnamestring;
+    private String middlenamestring;
+    private int btnint;
+
+    private getInfo Getinfo;
+    private setInfo SetInfo;
+
+    private NfcAdapter nfcAdapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        id = (EditText) findViewById(R.id.editTextID);
+        name = (EditText) findViewById(R.id.editTextName);
+        name.setFocusableInTouchMode(false);
+        name.setFocusable(false);
+        surname = (EditText) findViewById(R.id.editTextSurname);
+        surname.setFocusableInTouchMode(false);
+        surname.setFocusable(false);
+        middlename = (EditText) findViewById(R.id.editTextMiddlename);
+        middlename.setFocusableInTouchMode(false);
+        middlename.setFocusable(false);
+        btnstate = (ToggleButton) findViewById(R.id.toggleButton);
+        tglReadWrite = (ToggleButton) findViewById(R.id.tglReadWrite);
+        txtTagContent = (EditText) findViewById(R.id.txtTagContent);
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        if (nfcAdapter != null && nfcAdapter.isEnabled()) {
+            //    Toast.makeText(this, "NFC работает", Toast.LENGTH_LONG).show();
+        } else {
+            //  Toast.makeText(this, "NFC выключен или нет такой возможности у телефона", Toast.LENGTH_LONG).show();
+            finish();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Toast.makeText(this, "NFC intent доступен", Toast.LENGTH_LONG).show();
+        super.onNewIntent(intent);
+        if (tglReadWrite.isChecked()) {
+            Parcelable[] parcelable = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+
+            if (parcelable != null && parcelable.length > 0) {
+                readTextFromTag((NdefMessage) parcelable[0]);
+            } else {
+                    Toast.makeText(this, "no msg", Toast.LENGTH_LONG).show();
+            }
+        } else {
+        }
+        String action = intent.getAction();
+        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        byte[] id = tag.getId();
+        String serialNumber = bytesToHex(id);
+        txtTagContent.setText(serialNumber);
+
+    }
+    public static String bytesToHex(byte[] bytes)
+    {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
+    private void readTextFromTag(NdefMessage ndefMessage) {
+        NdefRecord[] ndefRecord = ndefMessage.getRecords();
+        if (ndefMessage != null && ndefRecord.length > 0) {
+            NdefRecord ndefRecord1 = ndefRecord[0];
+            String tagContent = getTextFromNdefRecord(ndefRecord1);
+            txtTagContent.setText(tagContent);
+        } else {
+            Toast.makeText(this, "no record", Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        IntentFilter[] intentFilters = new IntentFilter[]{};
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFilters, null);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        nfcAdapter.disableForegroundDispatch(this);
+        super.onPause();
+    }
+
+    public void OnClick(View view) {
+        idstring = id.getText().toString();
+        Getinfo = new getInfo();
+        Getinfo.start(idstring);
+        try {
+            Getinfo.join();
+        } catch (InterruptedException ie) {
+            Log.e("pass 0 ", ie.getMessage());
+        }
+
+        namestring = Getinfo.resname();
+        surnamestring = Getinfo.ressurname();
+        middlenamestring = Getinfo.resmiddlename();
+        btnint = Getinfo.resbtnstate();
+
+        name.setText(namestring);
+        surname.setText(surnamestring);
+        middlename.setText(middlenamestring);
+        if (btnint == 1) {
+            btnstate.setChecked(true);
+        } else {
+            btnstate.setChecked(false);
+        }
+    }
+
+    public void OnClickState(View view) {
+        idstring = id.getText().toString();
+        if (btnstate.isChecked()) {
+            btnint = 1;
+        } else {
+            btnint = 0;
+        }
+        SetInfo = new setInfo();
+        SetInfo.start(idstring, btnint);
+        try {
+            SetInfo.join();
+        } catch (InterruptedException ie) {
+            Log.e("pass 0 ", ie.getMessage());
+        }
+    }
+
+    public void tglReadWrite(View view) {
+        txtTagContent.setText("");
+    }
+
+    public String getTextFromNdefRecord(NdefRecord ndefRecord) {
+        String tagContent = null;
+        try {
+            byte[] payload = ndefRecord.getPayload();
+            String textEndoding = ((payload[0] & 128) == 0) ? "UTF-8" : "UTF-16";
+            int languagesize = payload[0] & 0063;
+            tagContent = new String(payload, languagesize + 1,
+                    payload.length - languagesize - 1, textEndoding);
+        } catch (UnsupportedEncodingException e) {
+            Log.e("getTextFromNDEFRecord", e.getMessage(), e);
+        }
+        return tagContent;
+    }
+}

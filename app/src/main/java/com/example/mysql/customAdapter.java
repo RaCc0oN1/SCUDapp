@@ -1,5 +1,6 @@
 package com.example.mysql;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 
 public class customAdapter extends BaseAdapter {
     Context mContext;
-    private ArrayList<User> user = new ArrayList<>();
+    private ArrayList<User> user;
 
     public customAdapter(Context context, ArrayList<User> user) {
         mContext = context;
@@ -33,6 +34,7 @@ public class customAdapter extends BaseAdapter {
         return position;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
@@ -44,12 +46,24 @@ public class customAdapter extends BaseAdapter {
         TextView tvSurName = (TextView) convertView.findViewById(R.id.tvSurName);
         TextView tvMidName = (TextView) convertView.findViewById(R.id.tvMidName);
         TextView tvAccess = (TextView) convertView.findViewById(R.id.tvAccess);
+        if (tempUser.getId() == 0) {
+            tvId.setText("ID");
+            tvName.setText(tempUser.getName());
+            tvSurName.setText(tempUser.getSurname());
+            tvMidName.setText(tempUser.getMiddlename());
+            tvAccess.setText("Допуск");
+        } else {
+            tvId.setText(Integer.toString(tempUser.getId()));
+            tvName.setText(tempUser.getName());
+            tvSurName.setText(tempUser.getSurname());
+            tvMidName.setText(tempUser.getMiddlename());
+            if (tempUser.getAccess() == 1) {
+                tvAccess.setText("✓");
+            } else {
+                tvAccess.setText("×");
+            }
+        }
 
-        tvId.setText(tempUser.getId());
-        tvName.setText(tempUser.getName());
-        tvSurName.setText(tempUser.getSurname());
-        tvMidName.setText(tempUser.getMiddlename());
-        tvAccess.setText(tempUser.getAccess());
 
         return convertView;
     }

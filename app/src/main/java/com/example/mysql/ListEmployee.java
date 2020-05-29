@@ -53,9 +53,16 @@ public class ListEmployee extends AppCompatActivity {
     }
 
     public void getAllInfo() {
-        Getinfo = new getInfo();
+        listUsers.add(new User(0, "Имя", "Фамилия", "Отчество", 0, "rfid"));
         getMaxId();
         for (int i = 1; i < maxID + 1; i++) {
+            Getinfo = new getInfo();
+            Getinfo.start(String.valueOf(i));
+            try {
+                Getinfo.join();
+            } catch (InterruptedException ie) {
+                Log.e("pass 0 ", ie.getMessage());
+            }
             listUsers.add(new User(i, Getinfo.resname(), Getinfo.ressurname(), Getinfo.resmiddlename(), Getinfo.resbtnstate(), Getinfo.getRfid_id()));
         }
         try {

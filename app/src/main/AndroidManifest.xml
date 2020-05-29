@@ -20,7 +20,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".ListEmployee"></activity>
+        <activity android:name=".ListEmployee" />
 
         <uses-library
             android:name="org.apache.http.legacy"

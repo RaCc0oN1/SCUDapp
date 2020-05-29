@@ -242,4 +242,7 @@ public class MainActivity extends AppCompatActivity {
             btnRfidID = 0;
         }
     }
+
+
+
 }

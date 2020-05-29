@@ -19,4 +19,10 @@
     <string name="tglWrite">Чтение</string>
     <string name="tglRead">Запись</string>
     <string name="emploBtn">Сотрудники</string>
+    <string name="returnBtn">Вернуться</string>
+    <string name="idtv">ID</string>
+    <string name="nametv">Имя</string>
+    <string name="surnametv">Фамилия</string>
+    <string name="midnametv">Отчество</string>
+    <string name="accesstv">Допуск</string>
 </resources>

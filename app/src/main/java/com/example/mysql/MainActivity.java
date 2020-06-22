@@ -77,12 +77,10 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
     private void openEmplList() {
         Intent intent = new Intent(this, ListEmployee.class);
         startActivity(intent);
     }
-
     @Override
     protected void onNewIntent(Intent intent) {
         //  Toast.makeText(this, "NFC intent доступен", Toast.LENGTH_LONG).show();
@@ -135,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
@@ -145,8 +142,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return new String(hexChars);
     }
-
-
     @Override
     protected void onResume() {
         Intent intent = new Intent(this, MainActivity.class);
@@ -156,13 +151,11 @@ public class MainActivity extends AppCompatActivity {
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFilters, null);
         super.onResume();
     }
-
     @Override
     protected void onPause() {
         nfcAdapter.disableForegroundDispatch(this);
         super.onPause();
     }
-
     public void OnClick(View view) {
         if (btnRfidIDstate.isChecked()) {
             if (!txtTagContent.getText().toString().equals("")) {
@@ -213,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
     public void OnClickState(View view) {
         idstring = ide.getText().toString();
         rfid_id = txtTagContent.getText().toString();
@@ -231,8 +223,6 @@ public class MainActivity extends AppCompatActivity {
             Log.e("pass 0 ", ie.getMessage());
         }
     }
-
-
     public void sendRGID_ID(View view) {
         rfid_id = txtTagContent.getText().toString();
         if (btnRfidIDstate.isChecked()) {
@@ -242,7 +232,4 @@ public class MainActivity extends AppCompatActivity {
             btnRfidID = 0;
         }
     }
-
-
-
 }
